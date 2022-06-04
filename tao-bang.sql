@@ -1,0 +1,4 @@
+CREATE TABLE lophoc(
+MalopHoc INT PRIMARY KEY IDENTITY,
+TenLopHoc VARCHAR(10)
+)
