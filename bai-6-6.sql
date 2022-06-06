@@ -45,6 +45,8 @@ insert into Student values('Bin Bin',22,'09-22-1999')
 insert into Student values('Bin Bin',23,'09-22-1999')
 insert into Student values('Bin Bin',24,'09-22-1999')
 go
+delete from Student 
+
 alter table Student
 add StudentID uniqueidentifier default newid() not null; 
 go
@@ -63,14 +65,23 @@ alter table Student
 add constraint fk foreign key (Malop)references Lop_Hoc(MaLop)
 go
 select * from Student
+go
 insert into Lop_Hoc(MaLop,TenLop) values('T2203','aptech')
 insert into Lop_Hoc(MaLop,TenLop) values('T2204','aptech')
 insert into Lop_Hoc(MaLop,TenLop) values('T2205','aptech')
 insert into Lop_Hoc(MaLop,TenLop) values('T2206','aptech')
 go
-insert into Student(MaLop) values('T2203')
-insert into Student(MaLop) values('T2204')
-insert into Student(MaLop) values('T2205')
-insert into Student(MaLop) values('T2206')
+select* from Lop_Hoc
+insert into Student(StudentName,Age,DOB,Malop) values('Bin Bin',20,'09-22-1999','T2203')
+insert into Student(StudentName,Age,DOB,Malop) values('Bin Bin',20,'09-22-1999','T2204')
+insert into Student(StudentName,Age,DOB,Malop) values('Bin Bin',20,'09-22-1999','T2205')
+insert into Student(StudentName,Age,DOB,Malop) values('Bin Bin',20,'09-22-1999','T2206')
+
+go
+
+
+update Student set DOB='09-11-1999'
+where StudentID='0CB01DCD-2A7E-4239-A72E-0938AB5507C1
+'
 
 
