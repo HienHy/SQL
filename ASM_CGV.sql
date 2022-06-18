@@ -47,7 +47,6 @@ go
 --Tạo bảng order đồ ăn
 create table Order_(
 OrderId int identity(30,1) primary key,
-CustomerId int constraint FK_CFood foreign key references Customer(CustomerId),
 OrderDate date constraint CK_ORD Check (OrderDate>=getdate()),
 Status nvarchar(50)
 )
@@ -55,11 +54,11 @@ go
 
 --Thêm dữ liệu
 go
-insert into Order_ values(10,'06-17-2022',N'Đã xuất kho')
-insert into Order_ values(11,'06-18-2022',N'Đã xuất kho')
-insert into Order_ values(12,'06-19-2022',N'Đã xuất kho')
-insert into Order_ values(13,'06-20-2022',N'Đã xuất kho')
-insert into Order_ values(14,'06-21-2022',N'Đã xuất kho')
+insert into Order_ values('06-19-2022',N'Đã xuất kho')
+insert into Order_ values('06-19-2022',N'Đã xuất kho')
+insert into Order_ values('06-19-2022',N'Đã xuất kho')
+insert into Order_ values('06-20-2022',N'Đã xuất kho')
+insert into Order_ values('06-21-2022',N'Đã xuất kho')
 
 go
 --Chi tiết đơn hàng
@@ -106,8 +105,8 @@ Date_ date check (Date_>=getdate() and Date_ < (getdate() + 30)),
 )
 go
 --Thêm dữ liệu
-insert into Time_ values('06-17-2022')
-insert into Time_ values('06-18-2022')
+insert into Time_ values('06-19-2022')
+insert into Time_ values('06-19-2022')
 insert into Time_ values('06-19-2022')
 insert into Time_ values('06-20-2022')
 insert into Time_ values('06-21-2022')
@@ -288,8 +287,8 @@ TicketReleaseDate date constraint CK_BOD Check (TicketReleaseDate>=getdate())
 )
 
 go
-insert into TicketInformation values(100,11,'06-17-2022')
-insert into TicketInformation values(101,12,'06-18-2022')
+insert into TicketInformation values(100,11,'06-19-2022')
+insert into TicketInformation values(101,12,'06-21-2022')
 insert into TicketInformation values(102,13,'06-19-2022')
 insert into TicketInformation values(103,11,'06-20-2022')
 insert into TicketInformation values(104,12,'06-20-2022')
