@@ -38,7 +38,7 @@ alter table Works_Assign
 drop constraint FK__Works_Ass__Stude__2A4B4B5E
 
 alter table Student
-drop constraint PK__Student__32C4C02A314C2A0A
+drop constraint PK__Student__32C4C02A2BA3E7B2
 
 create clustered index IX_Student
 on Student(StudentNo)
@@ -47,7 +47,15 @@ on Student(StudentNo)
 alter index IX_Student on Student rebuild with(fillfactor = 60)
 
 --3
-create nonclustered index IX_Dept
-on Department(DeptNo,DeptName,ManagerName)
+alter table Department
+drop constraint PK__Departme__0148CAAE49FF7535
+
+create clustered index IX_Dept
+on Department(DeptNo)
+
+
+create nonclustered index IX_Dept_fk
+on Department(DeptName,ManagerName)
+
 
 

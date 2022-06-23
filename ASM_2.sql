@@ -44,6 +44,7 @@ insert into Product values(205,124,'Note 20','Medium','Psc',800,10)
 insert into Product values(206,125,'Iphone 11pro','Old input machine','Psc',600,30)
 insert into Product values(207,125,'Iphone 13pro max','Hot','Psc',1400,200)
 insert into Product values(208,125,'Ipad 11pro','Medium','Psc',1200,100)
+insert into Product values(209,125,'Ipad 12pro','Medium','Psc',1200,0)
 
 -- Hiển thị tất cả các hãng sản xuất.
 select Name from Company
@@ -90,6 +91,71 @@ add constraint CK_Gia Check (Price >0)
 --Viết câu lệnh để thay đổi số điện thoại phải bắt đầu bằng 0.
 alter table Company
 add constraint CK_Tell Check (Tell like '0%')
+
+
+/*Đặt chỉ mục (index) cho cột Tên hàng và Người đặt hàng để tăng tốc độ truy vấn dữ liệu trên
+các cột này*/
+create index Product_Name
+on Product(Name)
+
+
+create index Description_Product
+on Product(Description)
+
+
+--View_SanPham: với các cột Mã sản phẩm, Tên sản phẩm, Giá bán
+create view View_SanPham
+as
+select P.ProductId,P.Name,P.Price
+from Product P
+
+--View_SanPham_Hang: với các cột Mã SP, Tên sản phẩm, Hãng sản xuất
+create view View_SanPham_Hang
+as 
+select p.ProductId,p.Name,C.CompanyId
+from Product p
+inner join Company C on p.CompanyId=C.CompanyId
+
+
+/* SP_SanPham_TenHang: Liệt kê các sản phẩm với tên hãng truyền vào store */
+create Procedure SP_SanPham_TenHang
+@Name varchar(50) 
+as
+select p.Name
+from Product p
+inner join Company C on C.CompanyId=p.CompanyId and C.Name=@Name
+
+execute SP_SanPham_TenHang 'Apple'
+/*SP_SanPham_Gia: Liệt kê các sản phẩm có giá bán lớn hơn hoặc bằng giá bán truyền
+vào*/
+
+create Procedure SP_SanPham_Gia
+@Price money 
+as
+select p.Name
+from Product p where p.Price >=@Price
+
+
+
+drop Procedure SP_SanPham_Gia
+execute SP_SanPham_Gia 1000
+/* SP_SanPham_HetHang: Liệt kê các sản phẩm đã hết hàng (số lượng = 0)*/
+
+create Procedure SP_SanPham_HetHang
+@Qty int = 0 
+as
+select p.Name,p.Qty
+from Product p where p.Qty=@Qty
+
+
+execute SP_SanPham_HetHang 
+
+
+
+
+
+
+
 
 select *from Company
 select *from Product

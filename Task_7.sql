@@ -87,7 +87,8 @@ insert into BookSold values
 
 
 
-
+/*Tạo một khung nhìn chứa danh sách các cuốn sách (BookCode, Title, Price) kèm theo số lượng đã
+bán được của mỗi cuốn sách.*/
 create view view_1_2
 as
 select b.BookCode,b.Title,b.Price,Amount
@@ -96,7 +97,8 @@ Book b on b.BookCode=bs.BookCode
 
 
 
-
+/*Tạo một khung nhìn chứa danh sách các khách hàng (CustomerID, CustomerName, Address) kèm
+theo số lượng các cuốn sách mà khách hàng đó đã mua.*/
 create view view_1_3
 as
 select C.CustomerID,C.CustomerName,C.Address,bs.Amount
@@ -104,7 +106,8 @@ from BookSold bs inner join
 Customer C on C.CustomerID=bs.CustomerID
 
 
-
+/*Tạo một khung nhìn chứa danh sách các khách hàng (CustomerID, CustomerName, Address) đã
+mua sách vào tháng trước, kèm theo tên các cuốn sách mà khách hàng đã mua.*/
 create view view_1_4
 as
 select C.CustomerID,C.CustomerName,C.Address,bs.Amount,B.Title
@@ -113,7 +116,8 @@ inner join Customer C on C.CustomerID=bs.CustomerID
 inner join Book B on B.BookCode=bs.BookCode and  month(EOMONTH(getdate())) - month(EOMONTH(Date))=1
 
 
-
+/*Tạo một khung nhìn chứa danh sách các khách hàng kèm theo tổng tiền mà mỗi khách hàng đã chi
+cho việc mua sách.*/
 create view view_1_5
 as
 select C.CustomerName,Sum(Price*Amount) as Total
@@ -207,7 +211,7 @@ insert into Mark values
 ('A00265','JS',0,8,5.33)
 insert into Mark values ('A00264','CF',8,6,6.67)
 
-
+/*Tạo một khung nhìn chứa danh sách các sinh viên đã có ít nhất 2 bài thi (2 môn học khác nhau).*/
 create view view_4_2
 as
 select s.FullName, count(SJ.SubjectCode) as CK
@@ -217,5 +221,54 @@ inner join Subjects SJ on SJ.SubjectCode=M.SubjectCode
 group by s.FullName
 having COUNT(SJ.SubjectCode)>=2
 
+
+
+--Tạo một khung nhìn chứa danh sách tất cả các sinh viên đã bị trượt ít nhất là một môn.
+
+create view view_4_3
+as
+select s.FullName
+from Student s
+inner join Mark m on m.RollNo=s.RollNo and m.Mark <= 4
+
+--Tạo một khung nhìn chứa danh sách các sinh viên đang học ở TimeSlot G.
+create view view_4_4
+as
+select s.FullName
+from Student s 
+inner join Class C on C.ClassCode = s.ClassCode and C.TimeSlot='G'
+
+--Tạo một khung nhìn chứa danh sách các giáo viên có ít nhất 3 học sinh thi trượt ở bất cứ môn nào.
+
+create view  view_4_5
+as
+select C.HeadTeacher,count(distinct S.RollNo) as R
+from Class C
+inner join Student S on S.ClassCode=C.ClassCode
+inner join Mark m on m.RollNo=s.RollNo 
+where m.Mark <= 4
+group by C.HeadTeacher
+having count(distinct S.RollNo) >=3
+
+/*Tạo một khung nhìn chứa danh sách các sinh viên thi trượt môn EPC của từng lớp. Khung nhìn
+này phải chứa các cột: Tên sinh viên, Tên lớp, Tên Giáo viên, Điểm thi môn EPC.*/
+
+create view view_4_6
+as
+select s.FullName,C.Room,C.HeadTeacher,m.Mark
+from Class C
+inner join Student s on C.ClassCode=s.ClassCode
+inner join Mark m on m.RollNo=s.RollNo
+inner join Subjects SJ on SJ.SubjectCode=m.SubjectCode 
+and SJ.SubjectCode='EPC'
+where m.Mark<=4
+
+
+
+
+select * from view_4_6
+select * from view_4_5
+select * from view_4_4
+select * from view_4_3
 select * from view_4_2
 

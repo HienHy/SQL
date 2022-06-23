@@ -25,7 +25,7 @@ insert into Contacts values('102',N'Mai Xuân Tiến',N'Thanh Hóa','11-18-1990'
 insert into Contacts values('103',N'Nguyễn Bá Quốc',N'Hà Nội','11-18-2000')
 insert into Contacts values('104',N'Tống Minh Dương',N'Thanh Hóa','11-18-1997')
 insert into Contacts values('105',N'Tống Minh Danh',N'Thanh Hóa','12-18-1997')
-
+insert into Contacts values('106',N'Tống Minh Danh',N'Thanh Hóa','06-20-1997')
 
 insert into Phone values('987654321','100')
 insert into Phone values('09873452','100')
@@ -41,7 +41,7 @@ insert into Phone values('0987654328','104')
 insert into Phone values('0987654329','104')
 insert into Phone values('0987654310','104')
 insert into Phone values('0987654330','103','')
-
+insert into Phone values('0987614330','106','')
 
 
 --Liệt kê danh sách những người trong danh bạ
@@ -83,6 +83,41 @@ add constraint CK_BOD Check (BOD <=getdate())
 --Viết câu lệnh để thêm trường ngày bắt đầu liên lạc.
 alter table Phone
 add Connects date
+
+--◦ IX_HoTen : đặt chỉ mục cho cột Họ và tên
+create index IX_HoTen
+on Contacts(Name)
+
+
+--◦ IX_SoDienThoai: đặt chỉ mục cho cột Số điện thoại
+create index IX_HoTen
+on Phone(PhoneNumber)
+
+--View_SoDienThoai: hiển thị các thông tin gồm Họ tên, Số điện thoại
+create view View_SoDienThoai
+as
+select C.Name,P.PhoneNumber
+from Contacts C
+inner join Phone P on P.CustomerId=C.CustomerId
+
+
+
+
+/* View_SinhNhat: Hiển thị những người có sinh nhật trong tháng hiện tại (Họ tên, Ngày
+sinh, Số điện thoại)*/
+
+
+create view View_SinhNhat
+as
+select C.Name,P.PhoneNumber
+from Contacts C
+inner join Phone P on P.CustomerId=C.CustomerId and month(getdate())-month(BOD)=0
+
+
+
+
+
+
 
 
 

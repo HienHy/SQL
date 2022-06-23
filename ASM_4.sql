@@ -80,16 +80,11 @@ GROUP BY pd.Name
 
 --Số loại sản phẩm trung bình theo loại sản phẩm.
 select 
-	count(p.ProductID) p_count, 
-	pt.pt_count, 
-	(convert(float, count(p.ProductID)) / pt.pt_count) avg_pt_of_p 
+	count(p.ProductID) p_count, pt.pt_count,(convert(float, count(p.ProductID)) / pt.pt_count) avg_pt_of_p 
 from 
-	Product p, 
-	(select convert(float, count(ProductTypeID)) as pt_count from ProductType) pt 
+	Product p,(select convert(float, count(ProductTypeID)) as pt_count from ProductType) pt 
 group by 
 	pt.pt_count
-
-
 
 
 --Hiển thị toàn bộ thông tin về sản phẩm và loại sản phẩm.
@@ -108,6 +103,37 @@ add constraint CK_date Check (DateOfManufacture <= getdate())
 --Viết câu lệnh để thêm trường phiên bản của sản phẩm.
 alter table Product
 add Version varchar(30)
+
+
+
+--Đặt chỉ mục (index) cho cột tên người chịu trách nhiệm
+create index Staff_name
+on Staff(Name)
+
+-- View_SanPham: Hiển thị các thông tin Mã sản phẩm, Ngày sản xuất, Loại sản phẩm
+create view View_SanPham
+as
+select P.ProductID,P.DateOfManufacture,PT.Name
+from Product P
+inner join ProductType PT on PT.ProductTypeID=P.ProductTypeID
+
+-- View_SanPham_NCTN: Hiển thị Mã sản phẩm, Ngày sản xuất, Người chịu trách nhiệm
+create view View_SanPham_NCTN
+as
+select P.ProductID,P.DateOfManufacture,S.Name
+from Product P
+inner join Staff S on S.StaffID=P.StaffID
+
+
+--View_Top_SanPham: Hiển thị 5 sản phẩm mới nhất (mã sản phẩm, loại sản phẩm, ngày sản xuất)
+
+create view View_Top_SanPham
+as
+select P.Name
+from Product P
+where 
+
+
 
 select * from Product
 select* From ProductType

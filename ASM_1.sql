@@ -142,8 +142,89 @@ add constraint CK_date Check (OrderDate < getdate())
 alter table Product
 add AppearanceDate date
 
+/*Đặt chỉ mục (index) cho cột Tên hàng và Người đặt hàng để tăng tốc độ truy vấn dữ liệu trên
+các cột này.*/
+create index Product_Name
+on Product(Name)
+go
+
+create index Customer_Name
+on Customer(Name)
+
+--View_KhachHang với các cột: Tên khách hàng, Địa chỉ, Điện thoại
+create view View_KhachHang
+as
+select C.Name,C.Address,C.Tell
+from Customer C 
+
+
+--View_SanPham với các cột: Tên sản phẩm, Giá bán
+create view View_SanPham
+as
+select P.Name,P.Price
+from Product P 
+--View_KhachHang_SanPham với các cột:
+create view View_KhachHang_SanPham
+as
+select C.Name,C.Tell,P.Name as ProductName,P.Qty,O.OrderDate
+from Customer C
+inner join Order_ O on O.CustomerID=C.CustomerID
+inner join OrderDetails OD on O.OrderId=OD.OrderId
+inner join Product P on OD.ProductID=P.ProductID
+
+--SP_TimKH_MaKH: Tìm khách hàng theo mã khách hàng
+
+create procedure sp_displayCustomer
+@CustomerID int
+as
+select C.Name from Customer C
+where C.CustomerID=@CustomerID
+
+
+execute sp_displayCustomer 201
+
+
+--SP_TimKH_MaHD: Tìm thông tin khách hàng theo mã hóa đơn
+
+create procedure SP_TimKH_MaHD
+@OrderId int
+as
+select C.Name,C.Address,C.Tell from Customer C
+inner join Order_ O on O.CustomerID=C.CustomerID and O.OrderId=@OrderId
+
+
+execute SP_TimKH_MaHD 300
+
+
+
+
+
+
+/*SP_SanPham_MaKH: Liệt kê các sản phẩm được mua bởi khách hàng có mã được
+truyền vào Store.*/
+
+create procedure SP_SanPham_MaKH
+@CustomerID int
+as
+select p.Name,C.name
+from Product p 
+inner join OrderDetails od on od.ProductID=p.ProductID
+inner join Order_ O on o.OrderId = od.OrderId 
+inner join Customer C on C.CustomerID=O.CustomerID where O.CustomerID=@CustomerID
+ 
+
+
+ execute SP_SanPham_MaKH 201
+
+
+
+
+
+
+
 
 select * from OrderDetails
 select * from Order_
 select * from Customer
 select * from Product
+select* from View_KhachHang

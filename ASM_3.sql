@@ -103,6 +103,76 @@ add constraint CK_Tell Check (Tell like '09%')
 alter table Subscriber
 add Bonus int
 
+--Đặt chỉ mục (Index) cho cột Tên khách hàng của bảng chứa thông tin khách hàng
+create index Customer_name
+on Customer(Name)
+
+--View_KhachHang: Hiển thị các thông tin Mã khách hàng, Tên khách hàng, địa chỉ
+create view View_KhachHang
+as
+select C.CustomerID,C.Name,C.Address
+from Customer C
+
+/*View_KhachHang_ThueBao: Hiển thị thông tin Mã khách hàng, Tên khách hàng, Số
+thuê bao*/
+
+create view View_KhachHang_ThueBao
+as
+select C.CustomerID,C.Name,S.PhoneNumber
+from Customer C
+inner join Subscriber S on S.CustomerID=C.CustomerID
+
+
+--◦ SP_TimKH_ThueBao: Hiển thị thông tin của khách hàng với số thuê bao nhập vào
+create procedure SP_TimKH_ThueBao
+@PhoneNumber varchar(15)
+as
+select C.Name,C.Address,C.CardID
+from Customer C 
+inner join Subscriber Sj on Sj.CustomerID=C.CustomerID and Sj.PhoneNumber=@PhoneNumber
+
+execute SP_TimKH_ThueBao '098900000'
+--◦ SP_TimTB_KhachHang: Liệt kê các số điện thoại của khách hàng theo tên truyền vào
+
+create procedure SP_TimTB_KhachHang
+@Name nvarchar(50)
+as
+select S.PhoneNumber,c.name
+from Subscriber S
+inner join Customer c on c.CustomerID=S.CustomerID and c.Name=@Name
+
+
+execute SP_TimTB_KhachHang N'Nguyễn Nguyệt Nga'
+
+--◦ SP_ThemTB: Thêm mới một thuê bao cho khách hàng
+
+CREATE PROCEDURE SP_ThemTB 
+    @SubscriberID INT,
+	@PhoneNumber VARCHAR(15),
+    @CustomerID INT,
+    @TypeID  INT,
+	@RegistrationDate date,
+	@ExpirationDate date,
+	@Status varchar(50)
+AS
+IF EXISTS (SELECT * FROM Subscriber WHERE SubscriberID =@SubscriberID )
+    RETURN 0
+INSERT INTO Subscriber(SubscriberID,PhoneNumber,CustomerID,TypeID,RegistrationDate,ExpirationDate,Status) VALUES (@SubscriberID,@PhoneNumber,@CustomerID,@TypeID,@RegistrationDate,@ExpirationDate,@Status)
+GO
+
+
+
+EXEC SP_ThemTB 100,'0123456789',1,10,'12-12-2002','01-12-2003','hello'
+EXEC SP_ThemTB 105,'0948484848',2,11,'12-12-2002','01-12-2003','hello'
+
+
+drop PROCEDURE SP_ThemTB
+
+SELECT * FROM Subscriber
+
+
+
+--◦ SP_HuyTB_MaKH: Xóa bỏ thuê bao của khách hàng theo Mã khách hàng
 
 
 
