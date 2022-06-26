@@ -13,6 +13,7 @@ Address nvarchar(50) not null,
 BOD date not null
 )
 
+
 create table Phone(
 PhoneNumber varchar(15) primary key,
 CustomerId varchar(15) CONSTRAINT fk_P FOREIGN KEY REFERENCES Contacts(CustomerId),
@@ -115,7 +116,40 @@ inner join Phone P on P.CustomerId=C.CustomerId and month(getdate())-month(BOD)=
 
 
 
+-- SP_Them_DanhBa: Thêm một người mới vào danh bạn
 
+
+create proc SP_Them_DanhBa
+@CustomerId varchar(15),
+@Name nvarchar(30),
+@Address nvarchar(50),
+@BOD date
+as
+IF EXISTS (SELECT * FROM Contacts WHERE CustomerId =@CustomerId)
+    RETURN 0
+insert into Contacts(CustomerId,Name,Address,BOD) values (@CustomerId,@Name,@Address,@BOD)
+
+exec SP_Them_DanhBa '107',N'Bom Bom',N'Hưng Yên','11-09-1995'
+
+
+
+
+
+--SP_Tim_DanhBa: Tìm thông tin liên hệ của một người theo tên (gần đúng)
+
+
+create proc SP_Tim_DanhBa
+@Name  nvarchar(30)
+as
+select C.CustomerId,C.Name,C.Address,P.PhoneNumber
+from Contacts C
+inner join Phone P on P.CustomerId = C.CustomerId
+where C.Name like  N'%' + @Name + '%'
+
+
+
+drop proc SP_Tim_DanhBa
+exec SP_Tim_DanhBa N'an'
 
 
 

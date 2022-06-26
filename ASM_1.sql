@@ -196,10 +196,6 @@ inner join Order_ O on O.CustomerID=C.CustomerID and O.OrderId=@OrderId
 execute SP_TimKH_MaHD 300
 
 
-
-
-
-
 /*SP_SanPham_MaKH: Liệt kê các sản phẩm được mua bởi khách hàng có mã được
 truyền vào Store.*/
 

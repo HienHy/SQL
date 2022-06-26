@@ -30,6 +30,8 @@ ProductTypeID varchar(50) CONSTRAINT fk_Type FOREIGN KEY REFERENCES ProductType(
 DateOfManufacture date not null,
 )
 go
+
+
 insert into Product values('Z37 111111',N'Máy tính sách tayZ37','987688','Z37E','12-12-2009')
 insert into Product values('G37 222222',N'Máy Giặt G37','987688','G37E','12-12-2009')
 insert into Product values('I37 333333',N'Máy inI37','987689','I37E','12-12-2019')
@@ -129,12 +131,124 @@ inner join Staff S on S.StaffID=P.StaffID
 
 create view View_Top_SanPham
 as
-select P.Name
+select top 5 p.ProductID,P.ProductTypeID,P.DateOfManufacture
 from Product P
-where 
+order by p.DateOfManufacture desc
 
 
 
+
+--◦ SP_Them_LoaiSP: Thêm mới một loại sản phẩm
+create proc SP_Them_LoaiSP
+    @ProductTypeID varchar(30),
+	@Name nVARCHAR(40)
+  
+  AS
+IF EXISTS (SELECT * FROM ProductType WHERE ProductTypeID = @ProductTypeID )
+    RETURN 0
+insert into ProductType(ProductTypeID,Name) values (@ProductTypeID,@Name)
+
+
+exec SP_Them_LoaiSP 'K38',N'Máy Chiếu in'
+
+
+--◦ SP_Them_NCTN: Thêm mới người chịu trách nhiệm
+create proc SP_Them_NCTN
+@StaffID int,
+@Name nvarchar(40)
+as
+IF EXISTS (SELECT * FROM Staff WHERE StaffID = @StaffID )
+return 0
+insert into Staff(StaffID,Name) values (@StaffID,@Name)
+
+
+exec SP_Them_NCTN 987654,N'Nguyễn Đình Hiến'
+
+--◦ SP_Them_SanPham: Thêm mới một sản phẩm
+create proc SP_Them_SanPham
+@ProductID varchar(40),
+@Name nvarchar(40),
+@StaffID varchar(40),
+@ProductTypeID varchar(40),
+@DateOfManufacture date,
+@Version varchar(30)
+as
+IF EXISTS (SELECT * FROM Product WHERE ProductID = @ProductID )
+return 0
+insert into Product(ProductID,Name,StaffID,ProductTypeID,DateOfManufacture,Version) values (@ProductID,@Name,@StaffID,@ProductTypeID,@DateOfManufacture,@Version)
+
+
+exec SP_Them_SanPham 'Z37 111123',N'Máy tính để bàn','987688','Z37E','12-12-2009','new'
+
+
+--◦ SP_Xoa_SanPham: Xóa một sản phẩm theo mã sản phẩm
+CREATE PROCEDURE SP_Xoa_SanPham 
+    @ProductID varchar(40)
+AS
+IF NOT EXISTS (SELECT * FROM Product WHERE ProductID = @ProductID)
+    RETURN 0
+DELETE FROM Product
+WHERE ProductID = @ProductID
+GO
+
+
+exec SP_Xoa_SanPham 'Z37 111123'
+
+
+
+
+
+--◦ SP_Xoa_SanPham_TheoLoai: Xóa các sản phẩm của một loại nào đó
+CREATE PROCEDURE SP_Xoa_SanPham_TheoLoai 
+    @ProductTypeID varchar(40)
+AS
+IF NOT EXISTS (SELECT * FROM ProductType WHERE ProductTypeID = @ProductTypeID)
+    RETURN 0
+DELETE FROM Product
+where ProductTypeID = @ProductTypeID
+
+	
+
+exec SP_Xoa_SanPham_TheoLoai H37E
+
+
+
+
+
+create proc Sp_hello
+@DateOfManufacture int, @count int output
+as
+select @count=COUNT(DateOfManufacture)from Product
+where DATEPART(YY,DateOfManufacture)=@DateOfManufacture
+
+
+declare @hello int
+execute Sp_hello 2009,
+@hello output
+print @hello
+--111111
+
+
+create proc Sp_hello_1
+@DateOfManufacture int
+as
+declare @count1 int
+select @count1=COUNT(DateOfManufacture)from Product
+where DATEPART(YY,DateOfManufacture)=@DateOfManufacture
+return @count1
+
+
+declare @count2 int
+exec @count2 = Sp_hello_1 2021
+print @count2
+
+
+
+
+select * from View_Top_SanPham
 select * from Product
 select* From ProductType
 select* From Staff
+
+
+

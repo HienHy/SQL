@@ -173,9 +173,16 @@ SELECT * FROM Subscriber
 
 
 --◦ SP_HuyTB_MaKH: Xóa bỏ thuê bao của khách hàng theo Mã khách hàng
+CREATE PROCEDURE SP_HuyTB_MaKH 
+    @SubscriberID INT
+AS
+IF NOT EXISTS (SELECT * FROM Subscriber WHERE SubscriberID = @SubscriberID)
+    RETURN 0
+DELETE FROM Subscriber
+WHERE SubscriberID = @SubscriberID
+GO
 
-
-
+EXEC SP_HuyTB_MaKH 105
 
 
 
